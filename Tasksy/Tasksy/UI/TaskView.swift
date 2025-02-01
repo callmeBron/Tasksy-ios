@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TaskView: View {
+    @State var bool: Bool = false
     @StateObject var viewModel = TaskViewModel(taskRepository: MockTaskRepo())
     var body: some View {
         VStack(spacing: 20) {
@@ -9,7 +10,8 @@ struct TaskView: View {
                 if let sections = viewModel.dataModel?.taskSections {
                     ForEach(sections) { section in
                         VStack(spacing: 15) {
-                            createSectionHeader(title: section.title)
+                            createSectionHeader(title: section.title,
+                                                buttonAction: section.buttonAction)
                                 .padding()
                             createSection(emptyStateString: section.emptySectionTitle,
                                           items: section.tasks)
@@ -22,6 +24,10 @@ struct TaskView: View {
             }
         }
         .scrollIndicators(.hidden)
+        .sheet(isPresented: $bool) {
+            ModifyTaskView(text: "",
+                           description: "")
+        }
     }
     
     @ViewBuilder
@@ -63,8 +69,12 @@ struct TaskView: View {
             if let buttonAction {
                 Button {
                     buttonAction()
+                    bool.toggle()
                 } label: {
                     Image(systemName: "plus.circle.fill")
+                        .resizable()
+                        .foregroundStyle(Color.black, Color.white)
+                        .frame(width: 25, height: 25)
                 }
             }
         }

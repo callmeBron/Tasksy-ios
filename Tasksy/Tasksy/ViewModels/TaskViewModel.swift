@@ -25,7 +25,10 @@ class TaskViewModel: ObservableObject {
             print("task action")
         })]
         
-        let todoSection = TaskSectionDataModel(title: "To do", tasks: currentTasks)
+        let todoSection = TaskSectionDataModel(title: "To do",
+                                               buttonAction: { print("add task button") },
+                                               tasks: currentTasks)
+        
         let completedSection = TaskSectionDataModel(title: "Completed",
                                                     emptySectionTitle: "There are currently no completed tasks")
         
