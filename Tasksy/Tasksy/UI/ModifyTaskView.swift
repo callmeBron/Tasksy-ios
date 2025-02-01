@@ -3,6 +3,8 @@ import SwiftUI
 struct ModifyTaskView: View {
     @State var text: String
     @State var description: String
+    @State var category = TaskCategory.personal
+    private let taskOptions = TaskCategory.allCases
     
     var body: some View {
         VStack {
@@ -47,8 +49,10 @@ struct ModifyTaskView: View {
                     Spacer()
                 }
                 HStack {
-                    ForEach(TaskCategory.allCases, id: \.rawValue) { category in
-                        CategoryTagView(category: category)
+                    Picker("Category", selection: $category) {
+                        ForEach(taskOptions, id: \.self) { category in
+                            CategoryTagView(category: category)
+                        }
                     }
                 }
             }
