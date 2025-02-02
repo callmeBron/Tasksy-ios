@@ -34,6 +34,13 @@ class TaskViewModel: ObservableObject {
         setDataModel()
     }
     
+    func completeTask() {
+        guard let selectedTask else { setErrorBanner(with: ("Task Not Completed", "We were unable to complete your task.")); return }
+        if selectedTask.taskStatus != .completed {
+            taskRepository.updateTask(task: selectedTask)
+        }
+    }
+    
     func deleteTask() {
         guard let selectedTask else { setErrorBanner(with: ("Task Not Deleted", "We were unable to delete your task.")); return }
         taskRepository.deleteTask(task: selectedTask)

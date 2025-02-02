@@ -4,9 +4,10 @@ import RealmSwift
 
 protocol TaskRepository {
     var taskRealmPublisher: PassthroughSubject<ResultState, Never> { get }
-    func persistTask(task: TaskDataModel)
-    func deleteTask(task: TaskDataModel)
     func fetchTasks() -> [TaskDataModel]
+    func persistTask(task: TaskDataModel)
+    func updateTask(task: TaskDataModel)
+    func deleteTask(task: TaskDataModel)
 }
 
 class ConcreteTaskRepository: TaskRepository {
@@ -37,6 +38,19 @@ class ConcreteTaskRepository: TaskRepository {
             }
         } catch {
             taskRealmPublisher.send(.error(title: "Task Creation Failed", message: "We were unable to save your task."))
+        }
+    }
+    
+    func updateTask(task: TaskDataModel) {
+        guard let taskRealm else { return }
+        guard let taskToUpdate = taskRealm.objects(TaskPersistedDataModel.self).first(where: { $0.taskID == task.id }) else { return }
+        do {
+            try taskRealm.write {
+                taskToUpdate.taskStatus = "completed"
+                taskRealmPublisher.send(.success)
+            }
+        } catch {
+            taskRealmPublisher.send(.error(title: "Failed To Update Task", message: "We were unable to update your task."))
         }
     }
     

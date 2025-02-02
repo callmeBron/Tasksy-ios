@@ -5,6 +5,15 @@ struct TaskCardView: View {
     let taskDescription: String
     let taskCategory: TaskCategory
     let taskStatus: TaskStatus
+    let taskAction: (() -> Void)?
+    
+    init(taskTitle: String, taskDescription: String, taskCategory: TaskCategory, taskStatus: TaskStatus, taskAction: (() -> Void)? = nil) {
+        self.taskTitle = taskTitle
+        self.taskDescription = taskDescription
+        self.taskCategory = taskCategory
+        self.taskStatus = taskStatus
+        self.taskAction = taskAction
+    }
     
     var body: some View {
         VStack {
@@ -19,7 +28,11 @@ struct TaskCardView: View {
             RoundedRectangle(cornerRadius: 8).stroke(.gray.opacity(0.5), lineWidth: 0.5)
                 .shadow(radius: 2)
         }
+        .onTapGesture {
+            taskAction?()
+        }
     }
+    
     @ViewBuilder
     private func taskContent() -> some View {
         HStack(alignment: .top) {

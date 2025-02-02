@@ -4,6 +4,7 @@ import Swinject
 struct TaskView: View {
     @State var showCreateTask: Bool = false
     @State var showDeleteConfirmation: Bool = false
+    @State var showEditAlert: Bool = false
     
     @StateObject var viewModel: TaskViewModel
     private let addTaskView = TaskContainer.shared.injectObject(AnyView.self, "TaskModifierView")
@@ -46,8 +47,13 @@ struct TaskView: View {
         } message: {
             Text("Tapping Delete will remove the task permanently.")
         }
+        .alert("Bro Come on", isPresented: $showEditAlert) {
+            Button("Yeah maybe i did okay.", role: .cancel) { }
+        } message: {
+            Text("Did you really think everything was done lol")
+        }
     }
-        
+    
     @ViewBuilder
     private func createViewHeader() -> some View {
         HStack {
@@ -114,10 +120,14 @@ struct TaskView: View {
                     TaskCardView(taskTitle: task.taskTitle,
                                  taskDescription: task.taskDescription,
                                  taskCategory: task.taskCategory,
-                                 taskStatus: task.taskStatus)
+                                 taskStatus: task.taskStatus,
+                                 taskAction: {
+                        viewModel.selectedTask = task
+                        viewModel.completeTask()
+                    })
                     .swipeActions {
                         Button {
-                            //action
+                            showEditAlert.toggle()
                         } label: {
                             HStack {
                                 Image(systemName: "pencil")
