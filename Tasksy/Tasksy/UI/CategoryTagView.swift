@@ -7,18 +7,19 @@ struct CategoryTagView: View {
         switch category {
         case .work:
             tagView(title: category.rawValue,
-                    textColor: Color.darkBlue,
-                    bgColor: Color.pastelBlue)
+                    textColor: category.optionColor,
+                    bgColor: category.optionBGColor)
         case .school:
             tagView(title: category.rawValue,
-                    textColor: Color.darkPurple,
-                    bgColor: Color.pastelPurple)
+                    textColor: category.optionColor,
+                    bgColor: category.optionBGColor)
         case .personal:
             tagView(title: category.rawValue,
-                    textColor: Color.darkPink,
-                    bgColor: Color.pastelPink)
+                    textColor: category.optionColor,
+                    bgColor: category.optionBGColor)
         }
     }
+    
     @ViewBuilder
     private func tagView(title:String, textColor: Color, bgColor: Color) -> some View {
         VStack {
@@ -31,6 +32,7 @@ struct CategoryTagView: View {
             Capsule()
                 .foregroundStyle(bgColor)
         }
+        .padding(.vertical)
     }
 }
 

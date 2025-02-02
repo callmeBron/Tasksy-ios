@@ -1,8 +1,15 @@
 import SwiftUI
+import Swinject
 
 struct TaskView: View {
     @State var bool: Bool = false
-    @StateObject var viewModel = TaskViewModel(taskRepository: MockTaskRepo())
+    @StateObject var viewModel: TaskViewModel
+    private let addTaskView = TaskContainer.shared.injectObject(AnyView.self, "TaskModifierView")
+    
+    init(viewModel: TaskViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
+    
     var body: some View {
         VStack(spacing: 20) {
             createViewHeader()
@@ -12,7 +19,7 @@ struct TaskView: View {
                         VStack(spacing: 15) {
                             createSectionHeader(title: section.title,
                                                 buttonAction: section.buttonAction)
-                                .padding()
+                            .padding()
                             createSection(emptyStateString: section.emptySectionTitle,
                                           items: section.tasks)
                         }
@@ -25,8 +32,7 @@ struct TaskView: View {
         }
         .scrollIndicators(.hidden)
         .sheet(isPresented: $bool) {
-            ModifyTaskView(text: "",
-                           description: "")
+            addTaskView
         }
     }
     
@@ -102,5 +108,5 @@ struct TaskView: View {
 }
 
 #Preview {
-    TaskView()
+    TaskView(viewModel: TaskViewModel(taskRepository: ConcreteTaskRepository()))
 }

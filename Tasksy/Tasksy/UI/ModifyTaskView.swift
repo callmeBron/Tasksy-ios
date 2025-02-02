@@ -1,24 +1,23 @@
 import SwiftUI
 
 struct ModifyTaskView: View {
-    @State var text: String
-    @State var description: String
-    @State var category = TaskCategory.personal
-    private let taskOptions = TaskCategory.allCases
+    @Environment(\.dismiss) var dismiss
+    @StateObject var viewModel: ModifiedTaskViewModel
+    
+    init(viewModel: ModifiedTaskViewModel) {
+        self._viewModel = StateObject(wrappedValue: viewModel)
+    }
     
     var body: some View {
         VStack {
-            Text("Create Task")
-                .font(.largeTitle)
-                .bold()
-            
             VStack {
                 HStack {
                     Text("Title")
                         .font(.caption)
+                        .bold()
                     Spacer()
                 }
-                TextField("title", text: $text)
+                TextField("Task Title", text: $viewModel.title)
                 
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
@@ -27,14 +26,14 @@ struct ModifyTaskView: View {
             }
             .padding()
             
-            
             VStack {
                 HStack {
                     Text("Description")
                         .font(.caption)
+                        .bold()
                     Spacer()
                 }
-                TextField("title", text: $description)
+                TextField("Task Description", text: $viewModel.description)
                 
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
@@ -46,23 +45,37 @@ struct ModifyTaskView: View {
                 HStack {
                     Text("Category")
                         .font(.caption)
+                        .bold()
                     Spacer()
                 }
-                HStack {
-                    Picker("Category", selection: $category) {
-                        ForEach(taskOptions, id: \.self) { category in
-                            CategoryTagView(category: category)
-                        }
+                
+                Picker("Category", selection: $viewModel.category) {
+                    ForEach(viewModel.taskOptions, id: \.self) { category in
+                        Text(category.rawValue)
+                            .bold()
+                            .foregroundStyle(category.optionColor)
                     }
-                }
+                }.pickerStyle(.wheel)
             }
             .padding()
+            Spacer()
         }
         .frame(maxHeight: .infinity)
-        
+        .safeAreaInset(edge: .top, content: {
+            VStack {
+                Text("Create Task")
+                    .font(.largeTitle)
+                    .bold()
+                Rectangle()
+                    .frame(height: 1.0, alignment: .bottom)
+                    .foregroundColor(Color.gray)
+            }
+            .padding()
+        })
         .safeAreaInset(edge: .bottom) {
             Button {
-                // action
+                viewModel.buttonAction()
+                dismiss()
             } label: {
                 Text("Create")
                     .bold()
@@ -78,5 +91,5 @@ struct ModifyTaskView: View {
 }
 
 #Preview {
-    ModifyTaskView(text: "", description: "")
+    ModifyTaskView(viewModel: ModifiedTaskViewModel(taskRepository: ConcreteTaskRepository()))
 }
