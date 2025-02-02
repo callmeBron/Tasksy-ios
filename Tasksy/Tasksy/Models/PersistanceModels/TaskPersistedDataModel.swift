@@ -11,7 +11,7 @@ class TasksPersistedDataModel: Object, ObjectKeyIdentifiable {
 }
 
 class TaskPersistedDataModel: Object, ObjectKeyIdentifiable  {
-    @Persisted(primaryKey: true) var id: ObjectId
+    @Persisted var taskID: String
     @Persisted var taskTitle: String
     @Persisted var taskDescription: String
     @Persisted var taskCategory: String
@@ -19,6 +19,7 @@ class TaskPersistedDataModel: Object, ObjectKeyIdentifiable  {
     
     convenience init(dataModel: TaskDataModel) {
         self.init()
+        self.taskID = dataModel.id
         self.taskTitle = dataModel.taskTitle
         self.taskDescription = dataModel.taskDescription
         self.taskCategory = dataModel.taskCategory.rawValue

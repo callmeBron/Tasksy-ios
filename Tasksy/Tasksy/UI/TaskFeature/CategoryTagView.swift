@@ -27,12 +27,11 @@ struct CategoryTagView: View {
                 .foregroundStyle(textColor)
                 .bold()
         }
-        .padding()
+        .padding(8)
         .background {
             Capsule()
                 .foregroundStyle(bgColor)
         }
-        .padding(.vertical)
     }
 }
 

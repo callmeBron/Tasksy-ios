@@ -3,15 +3,15 @@ import Combine
 import RealmSwift
 
 protocol TaskRepository {
-    var taskRealmPublisher: PassthroughSubject<Bool, Never>? { get }
+    var taskRealmPublisher: PassthroughSubject<ResultState, Never> { get }
     func persistTask(task: TaskDataModel)
-    func removeTask()
+    func deleteTask(task: TaskDataModel)
     func fetchTasks() -> [TaskDataModel]
 }
 
 class ConcreteTaskRepository: TaskRepository {
     private(set) var taskRealm: Realm?
-    var taskRealmPublisher: PassthroughSubject<Bool, Never>?
+    var taskRealmPublisher: PassthroughSubject<ResultState, Never> = PassthroughSubject<ResultState, Never>()
     
     init() {
         setupRealm()
@@ -23,45 +23,46 @@ class ConcreteTaskRepository: TaskRepository {
             Realm.Configuration.defaultConfiguration = configurationSetup
             taskRealm = try Realm()
         } catch {
-            // send an error to inform that we are unable to create a realm
+            taskRealmPublisher.send(.error(title: "Failed To Get Tasks", message: "We were unable to retrieve your task."))
         }
     }
     
     func persistTask(task: TaskDataModel) {
-        guard let taskRealm else { return } // return error
+        guard let taskRealm else { return }
         do {
             try taskRealm.write {
                 let newTask = TasksPersistedDataModel(dataModel: task)
                 taskRealm.add(newTask)
-                taskRealmPublisher?.send(true)
+                taskRealmPublisher.send(.success)
             }
         } catch {
-            // send an error to inform that we are unable to save a task
+            taskRealmPublisher.send(.error(title: "Task Creation Failed", message: "We were unable to save your task."))
         }
     }
     
-    func removeTask() {
-        // removal of tasks
+    func deleteTask(task: TaskDataModel) {
+        guard let taskRealm else { return }
+        guard let selectedTask = taskRealm.objects(TaskPersistedDataModel.self).first(where: { $0.taskID == task.id }) else { return }
+
+        do {
+            try taskRealm.write {
+                taskRealm.delete(selectedTask)
+                taskRealmPublisher.send(.success)
+            }
+        } catch {
+            taskRealmPublisher.send(.error(title: "Failed To Delete Task", message: "We were unable to delete your task."))
+        }
     }
     
     func fetchTasks() -> [TaskDataModel] {
-        guard let taskRealm else { return [] } // return error
-
-        let persistedTasks = taskRealm.objects(TasksPersistedDataModel.self)
-        var currentTasks: [TaskDataModel] = []
-
-        for persistedTaskObject in persistedTasks {
-            for task in persistedTaskObject.tasks {
-                let taskDataModel = TaskDataModel(
-                    taskTitle: task.taskTitle,
-                    taskDescription: task.description,
-                    taskCategory: TaskCategory(rawValue: task.taskCategory) ?? .personal,
-                    taskStatus: TaskStatus(rawValue: task.taskStatus) ?? .inProgress
-                )
-                currentTasks.append(taskDataModel)
+        guard let taskRealm else { return [] }
+        return taskRealm.objects(TasksPersistedDataModel.self)
+            .flatMap { $0.tasks }
+            .map {
+                TaskDataModel(taskTitle: $0.taskTitle,
+                              taskDescription: $0.taskDescription,
+                              taskCategory: TaskCategory(rawValue: $0.taskCategory) ?? .personal,
+                              taskStatus: TaskStatus(rawValue: $0.taskStatus) ?? .inProgress)
             }
-        }
-        
-        return currentTasks
     }
 }

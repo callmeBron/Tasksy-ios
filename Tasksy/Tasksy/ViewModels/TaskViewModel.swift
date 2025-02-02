@@ -3,12 +3,15 @@ import Combine
 
 class TaskViewModel: ObservableObject {
     @Published var dataModel: TaskViewDataModel?
+    
     private var taskCancellable: AnyCancellable?
-    private let taskRepository: TaskRepository // ConcreteTaskRepository
+    private let taskRepository: TaskRepository
     
     private var fetchedTasks: [TaskDataModel] {
         return taskRepository.fetchTasks()
     }
+
+    var selectedTask: TaskDataModel?
     
     init(taskRepository: TaskRepository) {
         self.taskRepository = taskRepository
@@ -17,12 +20,30 @@ class TaskViewModel: ObservableObject {
     }
     
     private func setUpRepositoryListener() {
-        taskCancellable = taskRepository.taskRealmPublisher?.sink(receiveValue: { [weak self] _ in
-            self?.fetch()
+        taskCancellable = taskRepository.taskRealmPublisher.sink(receiveValue: { [weak self] resultState in
+            switch resultState {
+            case .success:
+                self?.fetch()
+            case .error(let title, let message):
+                self?.setErrorBanner(with: (title, message))
+            }
         })
     }
     
-    private func fetch() {
+    func fetch() {
+        setDataModel()
+    }
+    
+    func deleteTask() {
+        guard let selectedTask else { setErrorBanner(with: ("Task Not Deleted", "We were unable to delete your task.")); return }
+        taskRepository.deleteTask(task: selectedTask)
+    }
+    
+    private func setErrorBanner(with content: (title: String, message: String)) {
+        dataModel?.notificationBanner = (content.title, content.message)
+    }
+    
+    private func setDataModel() {
         dataModel = TaskViewDataModel(secondaryButtonAction: { print("will show the weather view") },
                                       taskSections: [createToDoSection(),
                                                      createCompletedSection()])

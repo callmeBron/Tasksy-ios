@@ -18,6 +18,7 @@ struct ModifyTaskView: View {
                     Spacer()
                 }
                 TextField("Task Title", text: $viewModel.title)
+                    .frame(maxWidth: .infinity)
                 
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
@@ -33,8 +34,9 @@ struct ModifyTaskView: View {
                         .bold()
                     Spacer()
                 }
-                TextField("Task Description", text: $viewModel.description)
                 
+                TextField("Task Description", text: $viewModel.description)
+                    .frame(maxWidth: .infinity)
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
                     .foregroundColor(Color.gray)
@@ -86,6 +88,7 @@ struct ModifyTaskView: View {
                             .foregroundStyle(.purple)
                     }
             }
+            .ignoresSafeArea(.keyboard)
         }
     }
 }

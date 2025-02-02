@@ -19,7 +19,6 @@ struct TaskCardView: View {
             RoundedRectangle(cornerRadius: 8).stroke(.gray.opacity(0.5), lineWidth: 0.5)
                 .shadow(radius: 2)
         }
-        .padding(.horizontal)
     }
     @ViewBuilder
     private func taskContent() -> some View {

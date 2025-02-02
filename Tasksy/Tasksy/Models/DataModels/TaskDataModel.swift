@@ -1,41 +1,8 @@
 import Foundation
 import SwiftUICore
 
-enum TaskStatus: String {
-    case inProgress = "inProgress"
-    case completed = "completed"
-}
-
-enum TaskCategory: String, CaseIterable {
-    case work = "work"
-    case school = "school"
-    case personal = "personal"
-    
-    var optionColor: Color {
-        switch self {
-        case .work:
-            return .darkBlue
-        case .school:
-            return .darkPurple
-        case .personal:
-            return .darkPink
-        }
-    }
-    
-    var optionBGColor: Color {
-        switch self {
-        case .work:
-            return .pastelBlue
-        case .school:
-            return .pastelPurple
-        case .personal:
-            return .pastelPink
-        }
-    }
-}
-
 struct TaskDataModel: Identifiable {
-    let id = UUID()
+    let id: String
     let taskTitle: String
     let taskDescription: String
     let taskCategory: TaskCategory
@@ -43,6 +10,7 @@ struct TaskDataModel: Identifiable {
     let taskAction: (() -> Void)?
     
     init(taskTitle: String, taskDescription: String, taskCategory: TaskCategory, taskStatus: TaskStatus, taskAction: (() -> Void)? = nil) {
+        self.id = taskTitle + taskCategory.rawValue + taskDescription
         self.taskTitle = taskTitle
         self.taskDescription = taskDescription
         self.taskCategory = taskCategory

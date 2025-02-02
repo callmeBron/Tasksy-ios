@@ -2,7 +2,9 @@ import SwiftUI
 import Swinject
 
 struct TaskView: View {
-    @State var bool: Bool = false
+    @State var showCreateTask: Bool = false
+    @State var showDeleteConfirmation: Bool = false
+    
     @StateObject var viewModel: TaskViewModel
     private let addTaskView = TaskContainer.shared.injectObject(AnyView.self, "TaskModifierView")
     
@@ -13,7 +15,10 @@ struct TaskView: View {
     var body: some View {
         VStack(spacing: 20) {
             createViewHeader()
-            ScrollView {
+            if let notification = viewModel.dataModel?.notificationBanner {
+                NotificationBannerView(bannerTitle: notification.title,
+                                       bannerMessage: notification.message)
+            }
                 if let sections = viewModel.dataModel?.taskSections {
                     ForEach(sections) { section in
                         VStack(spacing: 15) {
@@ -29,13 +34,20 @@ struct TaskView: View {
                     Spacer()
                 }
             }
+        .refreshable {
+            viewModel.fetch()
         }
-        .scrollIndicators(.hidden)
-        .sheet(isPresented: $bool) {
+        .sheet(isPresented: $showCreateTask) {
             addTaskView
         }
+        .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) { viewModel.deleteTask() }
+        } message: {
+            Text("Tapping Delete will remove the task permanently.")
+        }
     }
-    
+        
     @ViewBuilder
     private func createViewHeader() -> some View {
         HStack {
@@ -75,7 +87,7 @@ struct TaskView: View {
             if let buttonAction {
                 Button {
                     buttonAction()
-                    bool.toggle()
+                    showCreateTask.toggle()
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
@@ -97,12 +109,36 @@ struct TaskView: View {
         }
         
         if let items {
-            ForEach(items) { task in
-                TaskCardView(taskTitle: task.taskTitle,
-                             taskDescription: task.taskDescription,
-                             taskCategory: task.taskCategory,
-                             taskStatus: task.taskStatus)
+            List {
+                ForEach(items) { task in
+                    TaskCardView(taskTitle: task.taskTitle,
+                                 taskDescription: task.taskDescription,
+                                 taskCategory: task.taskCategory,
+                                 taskStatus: task.taskStatus)
+                    .swipeActions {
+                        Button {
+                            //action
+                        } label: {
+                            HStack {
+                                Image(systemName: "pencil")
+                                Text("Edit Task")
+                            }
+                        }.tint(.orange)
+                        
+                        Button(role: .destructive) {
+                            viewModel.selectedTask = task
+                            showDeleteConfirmation.toggle()
+                        } label: {
+                            HStack {
+                                Image(systemName: "trash.fill")
+                                Text("Delete Task")
+                            }
+                        }.tint(.red)
+                    }
+                    
+                }
             }
+            .listStyle(.plain)
         }
     }
 }
