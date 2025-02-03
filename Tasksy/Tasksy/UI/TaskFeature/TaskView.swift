@@ -2,13 +2,8 @@ import SwiftUI
 import Swinject
 
 struct TaskView: View {
-    @State var showCreateTask: Bool = false
-    @State var showDeleteConfirmation: Bool = false
-    @State var showEditAlert: Bool = false
-    
     @StateObject var viewModel: TaskViewModel
-    private let addTaskView = TaskContainer.shared.injectObject(AnyView.self, "TaskModifierView")
-    
+
     init(viewModel: TaskViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -20,37 +15,40 @@ struct TaskView: View {
                 NotificationBannerView(bannerTitle: notification.title,
                                        bannerMessage: notification.message)
             }
-                if let sections = viewModel.dataModel?.taskSections {
-                    ForEach(sections) { section in
-                        VStack(spacing: 15) {
-                            createSectionHeader(title: section.title,
-                                                buttonAction: section.buttonAction)
-                            .padding()
-                            createSection(emptyStateString: section.emptySectionTitle,
-                                          items: section.tasks)
-                        }
-                        .padding(.vertical)
+            if let sections = viewModel.dataModel?.taskSections {
+                ForEach(sections) { section in
+                    VStack(spacing: 15) {
+                        createSectionHeader(title: section.title,
+                                            buttonAction: section.buttonAction)
+                        .padding()
+                        createSection(section: section)
                     }
-                    
-                    Spacer()
+                    .padding(.vertical)
                 }
+                
+                Spacer()
             }
+        }
         .refreshable {
             viewModel.fetch()
         }
-        .sheet(isPresented: $showCreateTask) {
+        .sheet(isPresented: $viewModel.showCreateTaskView) {
+            let addTaskView = TaskContainer.shared.injectObjectWArg(AnyView.self,
+                                                                    ObjectNames.TaskObjects.taskFormView,
+                                                                    nil)
             addTaskView
         }
-        .alert("Are you sure?", isPresented: $showDeleteConfirmation) {
+        .sheet(isPresented: $viewModel.shouldShowEditView) {
+            let updateTaskView = TaskContainer.shared.injectObjectWArg(AnyView.self,
+                                                                       ObjectNames.TaskObjects.taskFormView,
+                                                                       viewModel.selectedTask)
+            updateTaskView
+        }
+        .alert("Are you sure?", isPresented: $viewModel.showDeleteConfirmation) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) { viewModel.deleteTask() }
         } message: {
             Text("Tapping Delete will remove the task permanently.")
-        }
-        .alert("Bro Come on", isPresented: $showEditAlert) {
-            Button("Yeah maybe i did okay.", role: .cancel) { }
-        } message: {
-            Text("Did you really think everything was done lol")
         }
     }
     
@@ -93,7 +91,7 @@ struct TaskView: View {
             if let buttonAction {
                 Button {
                     buttonAction()
-                    showCreateTask.toggle()
+                    viewModel.showCreateView()
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .resizable()
@@ -105,8 +103,8 @@ struct TaskView: View {
     }
     
     @ViewBuilder
-    private func createSection(emptyStateString: String? = nil, items: [TaskDataModel]? = nil) -> some View {
-        if let emptyStateString {
+    private func createSection(section: TaskSectionDataModel? = nil) -> some View {
+        if let emptyStateString = section?.emptySectionTitle {
             Image(systemName: "tray.fill")
                 .resizable()
                 .frame(width: 25, height: 20)
@@ -114,36 +112,18 @@ struct TaskView: View {
                 .font(.title3)
         }
         
-        if let items {
+        if let items = section?.tasks {
             List {
                 ForEach(items) { task in
                     TaskCardView(taskTitle: task.taskTitle,
                                  taskDescription: task.taskDescription,
                                  taskCategory: task.taskCategory,
-                                 taskStatus: task.taskStatus,
-                                 taskAction: {
-                        viewModel.selectedTask = task
-                        viewModel.completeTask()
-                    })
-                    .swipeActions {
-                        Button {
-                            showEditAlert.toggle()
-                        } label: {
-                            HStack {
-                                Image(systemName: "pencil")
-                                Text("Edit Task")
-                            }
-                        }.tint(.orange)
-                        
-                        Button(role: .destructive) {
-                            viewModel.selectedTask = task
-                            showDeleteConfirmation.toggle()
-                        } label: {
-                            HStack {
-                                Image(systemName: "trash.fill")
-                                Text("Delete Task")
-                            }
-                        }.tint(.red)
+                                 taskStatus: task.taskStatus)
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        createButtons(task: task, buttons: section?.taskLeadingOptions)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        createButtons(task: task, buttons: section?.taskTrailingOptions)
                     }
                     
                 }
@@ -151,8 +131,25 @@ struct TaskView: View {
             .listStyle(.plain)
         }
     }
+    
+    @ViewBuilder
+    private func createButtons(task: TaskDataModel, buttons: [(buttonType: SwipeActionType, buttonAction: () -> Void)]?) -> some View {
+        if let buttons = buttons {
+            ForEach(buttons, id: \.buttonType.title) { button in
+                Button {
+                    viewModel.selectedTask = task
+                    button.buttonAction()
+                } label: {
+                    HStack {
+                        button.buttonType.icon
+                        Text(button.buttonType.title)
+                    }
+                }.tint(button.buttonType.color)
+            }
+        }
+    }
 }
 
 #Preview {
-    TaskView(viewModel: TaskViewModel(taskRepository: ConcreteTaskRepository()))
+    TaskView(viewModel: TaskViewModel(taskRepository: RealmTaskDatabase()))
 }
