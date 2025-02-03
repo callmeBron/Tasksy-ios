@@ -1,0 +1,33 @@
+{
+  "originHash" : "0a001a01aa2f670f13f307c5c7534ea0a5fcb9baba7bcb761780e702264f8f6c",
+  "pins" : [
+    {
+      "identity" : "realm-core",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-core",
+      "state" : {
+        "revision" : "95da0df7815d7cbaff14ed5e8b73fe4c2a992816",
+        "version" : "11.0.4"
+      }
+    },
+    {
+      "identity" : "realm-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/realm/realm-swift",
+      "state" : {
+        "revision" : "77658519b13388c098a7624a94491738f8bb2983",
+        "version" : "10.10.0"
+      }
+    },
+    {
+      "identity" : "swinject",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Swinject/Swinject.git",
+      "state" : {
+        "revision" : "b1d92a53159fe45e162c307183aec9be15e4e7ae",
+        "version" : "2.8.0"
+      }
+    }
+  ],
+  "version" : 3
+}

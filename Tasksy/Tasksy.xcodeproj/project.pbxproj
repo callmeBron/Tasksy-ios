@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		76EAABD32D4F7E110015B35F /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 76EAABD22D4F7E110015B35F /* Swinject */; settings = {ATTRIBUTES = (Required, ); }; };
+		76EAABD82D4F7E500015B35F /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 76EAABD72D4F7E500015B35F /* Realm */; settings = {ATTRIBUTES = (Required, ); }; };
+		76EAABDA2D4F7E500015B35F /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 76EAABD92D4F7E500015B35F /* RealmSwift */; settings = {ATTRIBUTES = (Required, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		76EAAB0E2D4DF1050015B35F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +58,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76EAABDA2D4F7E500015B35F /* RealmSwift in Frameworks */,
+				76EAABD82D4F7E500015B35F /* Realm in Frameworks */,
+				76EAABD32D4F7E110015B35F /* Swinject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +121,9 @@
 			);
 			name = Tasksy;
 			packageProductDependencies = (
+				76EAABD22D4F7E110015B35F /* Swinject */,
+				76EAABD72D4F7E500015B35F /* Realm */,
+				76EAABD92D4F7E500015B35F /* RealmSwift */,
 			);
 			productName = Tasksy;
 			productReference = 76EAAAFD2D4DF1030015B35F /* Tasksy.app */;
@@ -195,6 +207,10 @@
 			);
 			mainGroup = 76EAAAF42D4DF1030015B35F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				76EAABD12D4F7E100015B35F /* XCRemoteSwiftPackageReference "Swinject" */,
+				76EAABD62D4F7E500015B35F /* XCRemoteSwiftPackageReference "realm-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76EAAAFE2D4DF1030015B35F /* Products */;
 			projectDirPath = "";
@@ -395,15 +411,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"Tasksy/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"Tasksy/App/Preview Content\"";
 				DEVELOPMENT_TEAM = 773U2QNPAW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -428,11 +445,12 @@
 				DEVELOPMENT_TEAM = 773U2QNPAW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -558,6 +576,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		76EAABD12D4F7E100015B35F /* XCRemoteSwiftPackageReference "Swinject" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Swinject/Swinject.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.8.0;
+			};
+		};
+		76EAABD62D4F7E500015B35F /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 10.10.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		76EAABD22D4F7E110015B35F /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76EAABD12D4F7E100015B35F /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		76EAABD72D4F7E500015B35F /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76EAABD62D4F7E500015B35F /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		76EAABD92D4F7E500015B35F /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 76EAABD62D4F7E500015B35F /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 76EAAAF52D4DF1030015B35F /* Project object */;
 }
