@@ -12,27 +12,25 @@ class TaskContainer {
     }
     
     func bindDependencies(with container: Container) {
-        container.register(TaskRepository.self) { _ in
-            ConcreteTaskRepository()
+        container.register(TaskDatabase.self) { _ in
+            RealmTaskDatabase()
         }.inObjectScope(.container)
         
-        container.register(ModifiedTaskViewModel.self) { resolver in
-            ModifiedTaskViewModel(taskRepository: resolver.resolve(TaskRepository.self)!)
-        }
+        container.register(TaskFormViewModel.self) { (resolver, task: TaskDataModel?) in
+            TaskFormViewModel(taskRepository: resolver.resolve(TaskDatabase.self)!,
+                              selectedTask: task)
+        }.inObjectScope(.transient)
         
-        container.register(ModifiedTaskViewModel.self) { resolver in
-            ModifiedTaskViewModel(taskRepository: resolver.resolve(TaskRepository.self)!)
-        }
-        
-        container.register(AnyView.self, name: "TaskModifierView") { resolver in
-            AnyView(ModifyTaskView(viewModel: resolver.resolve(ModifiedTaskViewModel.self)!))
+        container.register(AnyView.self, name: ObjectNames.TaskObjects.taskFormView) { (resolver, task: TaskDataModel?) in
+            AnyView(TaskFormView(viewModel: resolver.resolve(TaskFormViewModel.self,
+                                                             argument: task)!))
         }
         
         container.register(TaskViewModel.self) { resolver in
-            TaskViewModel(taskRepository: resolver.resolve(TaskRepository.self)!)
+            TaskViewModel(taskRepository: resolver.resolve(TaskDatabase.self)!)
         }
         
-        container.register(AnyView.self, name: "TaskView") { resolver in
+        container.register(AnyView.self, name: ObjectNames.TaskObjects.taskView) { resolver in
             AnyView(TaskView(viewModel: resolver.resolve(TaskViewModel.self)!))
         }
     }
@@ -42,5 +40,18 @@ class TaskContainer {
             fatalError("Dependency \(type) not registered!")
         }
         return object
+    }
+    func injectObjectWArg<T>(_ type: T.Type, _ named: String? = nil, _ task: TaskDataModel? = nil) -> T {
+        guard let object = container.resolve(type, name: named, argument: task) else {
+            fatalError("Dependency \(type) not registered!")
+        }
+        return object
+    }
+}
+
+struct ObjectNames {
+    struct TaskObjects {
+        static let taskFormView = "TaskFormView"
+        static let taskView = "TaskView"
     }
 }
