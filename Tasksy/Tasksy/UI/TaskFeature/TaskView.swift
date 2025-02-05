@@ -3,7 +3,7 @@ import Swinject
 
 struct TaskView: View {
     @StateObject var viewModel: TaskViewModel
-
+    @State var showPopUp: Bool = false
     init(viewModel: TaskViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
@@ -32,6 +32,9 @@ struct TaskView: View {
         .refreshable {
             viewModel.fetch()
         }
+        .popup(isPresented: $showPopUp, view: {
+            WeatherView()
+        })
         .sheet(isPresented: $viewModel.showCreateTaskView) {
             let addTaskView = TaskContainer.shared.injectObjectWArg(AnyView.self,
                                                                     ObjectNames.TaskObjects.taskFormView,
@@ -62,7 +65,7 @@ struct TaskView: View {
             Spacer()
             
             Button {
-                viewModel.dataModel?.secondaryButtonAction()
+                showPopUp.toggle()
             } label: {
                 Image(systemName: "sun.max")
                     .resizable()
@@ -129,6 +132,7 @@ struct TaskView: View {
                 }
             }
             .listStyle(.plain)
+            
         }
     }
     
