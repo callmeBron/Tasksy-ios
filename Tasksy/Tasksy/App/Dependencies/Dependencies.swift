@@ -2,8 +2,8 @@ import Foundation
 import SwiftUICore
 import Swinject
 
-class TaskContainer {
-    static let shared = TaskContainer()
+class DependencyContainer {
+    static let shared = DependencyContainer()
     var container: Container
     
     init() {
@@ -12,6 +12,30 @@ class TaskContainer {
     }
     
     func bindDependencies(with container: Container) {
+        /// Weather Features
+
+        container.register(WeatherDatabase.self) { _ in
+            RealmWeatherDatabase()
+        }.inObjectScope(.container)
+        
+        container.register(WeatherServiceAPI.self) { resolver in
+            WeatherService()
+        }
+        
+        container.register(WeatherRepository.self) { resolver in
+            ConcreteWeatherRepository(dataBase: resolver.resolve(WeatherDatabase.self)!,
+                                      webService: resolver.resolve(WeatherServiceAPI.self)!)
+        }
+        
+        container.register(WeatherViewModel.self) { resolver in
+            WeatherViewModel(weatherRepository: resolver.resolve(WeatherRepository.self)!)
+        }
+        
+        container.register(AnyView.self, name: ObjectNames.TaskObjects.weatherView) { resolver in
+            AnyView(WeatherView(viewModel:resolver.resolve(WeatherViewModel.self)!))
+        }
+        
+        /// Task Features
         container.register(TaskDatabase.self) { _ in
             RealmTaskDatabase()
         }.inObjectScope(.container)
@@ -53,5 +77,6 @@ struct ObjectNames {
     struct TaskObjects {
         static let taskFormView = "TaskFormView"
         static let taskView = "TaskView"
+        static let weatherView = "WeatherView"
     }
 }
