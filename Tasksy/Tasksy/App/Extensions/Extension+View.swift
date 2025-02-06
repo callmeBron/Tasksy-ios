@@ -1,31 +1,17 @@
 import SwiftUI
 
 extension View {
-    public func popup<PopupContent: View>(
-        isPresented: Binding<Bool>,
-        view: @escaping () -> PopupContent) -> some View {
-            self.modifier(
-                Popup(
-                    isPresented: isPresented,
-                    view: view)
-            )
-        }
-}
-
-public struct Popup<PopupContent>: ViewModifier where PopupContent: View {
-    /// Controls if the sheet should be presented or not
-    @Binding var isPresented: Bool
-    
-    /// The content to present
-    var view: () -> PopupContent
-    
-    init(isPresented: Binding<Bool>,
-         view: @escaping () -> PopupContent) {
-        self._isPresented = isPresented
-        self.view = view
+    func roundedCorner(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
     }
     
-    public func body(content: Content) -> some View {
-        content
+    public func popup<view: View>(isPresented: Binding<Bool>,
+                                  @ViewBuilder view: @escaping () -> view) -> some View {
+        fullScreenCover(isPresented: isPresented) {
+            PopupView {
+                view()
+            }
+        }
+        .ignoresSafeArea()
     }
 }
