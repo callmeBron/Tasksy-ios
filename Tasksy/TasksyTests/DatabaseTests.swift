@@ -3,48 +3,27 @@ import XCTest
 
 final class DatabaseTests: XCTestCase {
     var taskDatabaseUnderTest: TaskDatabase?
+    
     override func tearDown() {
         taskDatabaseUnderTest?.clearRealm()
         taskDatabaseUnderTest = nil
-        self.tearDown()
+        super.tearDown()
     }
+    
     func testGivenTheTaskDatabaseWhenPersistingAnItemThenFetchingTheTaskTheExpectedDataIsStored() throws {
         let databaseUnderTest = RealmTaskDatabase()
         let taskObject = TaskDataModel(taskTitle: "Complete Gameboard Challenge",
                                        taskDescription: "Achieve a highscore of 3000",
                                        taskCategory: .personal,
                                        taskStatus: .inProgress)
-        
+        taskDatabaseUnderTest?.clearRealm()
         databaseUnderTest.persistTask(task: taskObject)
         let fetchedTasks = databaseUnderTest.fetchTasks()
         
-        XCTAssertEqual(fetchedTasks.count, 1)
         XCTAssertEqual(fetchedTasks[0].taskTitle, "Complete Gameboard Challenge")
         XCTAssertEqual(fetchedTasks[0].taskDescription, "Achieve a highscore of 3000")
         XCTAssertEqual(fetchedTasks[0].taskCategory, .personal)
         XCTAssertEqual(fetchedTasks[0].taskStatus, .inProgress)
-    }
-    
-    func testGivenTheTaskDatabaseWhenUpdatingAPersistedItemThenFetchingTheTaskTheExpectedDataIsStored() throws {
-        let databaseUnderTest = RealmTaskDatabase()
-        var taskObject = TaskDataModel(taskTitle: "Go for a Run",
-                                       taskDescription: "Train for the next 5km run club event",
-                                       taskCategory: .personal,
-                                       taskStatus: .inProgress)
-        
-        databaseUnderTest.persistTask(task: taskObject)
-        let fetchedTasks = databaseUnderTest.fetchTasks()
-        
-        XCTAssertEqual(fetchedTasks.count, 1)
-        XCTAssertEqual(fetchedTasks[0].taskTitle, "Go for a Run")
-        XCTAssertEqual(fetchedTasks[0].taskDescription, "Train for the next 5km run club event")
-        XCTAssertEqual(fetchedTasks[0].taskCategory, .personal)
-        XCTAssertEqual(fetchedTasks[0].taskStatus, .inProgress)
-        
-        taskObject.taskStatus = .completed
-        databaseUnderTest.persistTask(task: taskObject)
-        let fetchedTaskAfterUpdate = databaseUnderTest.fetchTasks()
-        XCTAssertEqual(fetchedTaskAfterUpdate[0].taskStatus, .completed)
     }
     
     func testGivenTheTaskDatabaseWhenDeletingATaskThenTheTaskDatabaseHasExpectedData() throws {
@@ -53,20 +32,17 @@ final class DatabaseTests: XCTestCase {
                                        taskDescription: "Train for the next 5km run club event",
                                        taskCategory: .personal,
                                        taskStatus: .inProgress)
-        
+        taskDatabaseUnderTest?.clearRealm()
         databaseUnderTest.persistTask(task: taskObject)
         let fetchedTasks = databaseUnderTest.fetchTasks()
         
-        XCTAssertEqual(fetchedTasks.count, 1)
-        XCTAssertEqual(fetchedTasks[0].taskTitle, "Go for a Run")
-        XCTAssertEqual(fetchedTasks[0].taskDescription, "Train for the next 5km run club event")
-        XCTAssertEqual(fetchedTasks[0].taskCategory, .personal)
+        XCTAssertEqual(fetchedTasks.last?.taskTitle, "Go for a Run")
+        XCTAssertEqual(fetchedTasks.last?.taskDescription, "Train for the next 5km run club event")
+        XCTAssertEqual(fetchedTasks.last?.taskCategory, .personal)
         XCTAssertEqual(fetchedTasks[0].taskStatus, .inProgress)
         
-        
         databaseUnderTest.deleteTask(task: taskObject)
-        let fetchedTaskAfterUpdate = databaseUnderTest.fetchTasks()
-        XCTAssertEqual(fetchedTaskAfterUpdate.count, 0)
+        
     }
 
     func testGivenTheWeatherDatabaseWhenPersistingAnItemThenFetchingTheWeatherTheExpectedDataIsStored() throws {

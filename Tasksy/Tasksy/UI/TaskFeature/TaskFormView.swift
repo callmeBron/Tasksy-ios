@@ -94,7 +94,3 @@ struct TaskFormView: View {
         }
     }
 }
-
-#Preview {
-    TaskFormView(viewModel: TaskFormViewModel(taskRepository: RealmTaskDatabase()))
-}

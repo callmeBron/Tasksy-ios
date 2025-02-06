@@ -3,7 +3,7 @@ import Combine
 @testable import Tasksy
 
 final class TaskViewModelTests: XCTestCase {
-
+  
     func testGivenTheTaskViewModelWhenReceivingDataThenTheCorrectDataIsSet() throws {
         let viewModelUnderTest = TaskViewModel(taskRepository: MockTaskDatabase())
         viewModelUnderTest.fetch()
@@ -17,8 +17,11 @@ final class TaskViewModelTests: XCTestCase {
 private class MockTaskDatabase: TaskDatabase {
     var taskUpdateNotifier = PassthroughSubject<ResultState, Never>()
     
-    func fetchTasks() -> [TaskDataModel] {
+    init() {
         taskUpdateNotifier.send(.success)
+    }
+    
+    func fetchTasks() -> [TaskDataModel] {
         return [TaskDataModel(taskTitle: "Run a 5km",
                               taskDescription: "at least jog for most of it",
                               taskCategory: .personal,

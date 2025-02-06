@@ -2,6 +2,9 @@ import XCTest
 
 extension XCTestCase {
     func lauchApp() {
+        if self.appIsInstalled(timeout: 5) {
+            uninstallApp(name: "Tasksy")
+        }
         let app = XCUIApplication()
         app.launch()
     }
@@ -95,7 +98,7 @@ extension XCTestCase {
             removeButton.tap()
         }
         
-        let deleteAppButton = springboard.buttons["Delete"]
+        let deleteAppButton = springboard.buttons["Delete App"]
         if deleteAppButton.waitForExistence(timeout: timeout) {
             deleteAppButton.tap()
         }

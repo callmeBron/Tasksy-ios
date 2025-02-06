@@ -109,6 +109,7 @@ struct TaskView: View {
                         .resizable()
                         .foregroundStyle(Color.black, Color.white)
                         .frame(width: 25, height: 25)
+                        .accessibilityIdentifier("taskAddButton")
                 }
             }
         }
