@@ -1,43 +1,78 @@
-//
-//  TasksyUITests.swift
-//  TasksyUITests
-//
-//  Created by Bronwyn dos Santos on 2025/02/01.
-//
-
 import XCTest
 
 final class TasksyUITests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+    func testWhenCreatingANewTaskThenTheTaskIsAddedToView() throws {
+        lauchApp()
+       
+        createATask()
+        
+        verifyTextExists(text: "Create a new to do list app")
+        verifyTextExists(text: "add extra functionality")
+        testTearDown()
     }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    
+    func testWhenCompletingANewTaskThenTheTaskIsUpdatedOnView() throws {
+        lauchApp()
+       
+        createATask()
+        
+        verifyTextExists(text: "Create a new to do list app")
+        verifyTextExists(text: "add extra functionality")
+        
+        swipeRightOnTaskCard()
+        tapOnButton(text: "Mark as Complete")
+        
+        testTearDown()
     }
-
-    @MainActor
-    func testExample() throws {
-        // UI tests must launch the application that they test.
-        let app = XCUIApplication()
-        app.launch()
-
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testWhenDeletingANewTaskThenTheTaskIsRemovedToView() throws {
+        lauchApp()
+       
+        createATask()
+        
+        verifyTextExists(text: "Create a new to do list app")
+        verifyTextExists(text: "add extra functionality")
+        
+        swipeLeftOnTaskCard()
+        tapOnButton(text: "Delete Task")
+        
+        veriftyTextDoesNotExist(text: "Create a new to do list app")
+        veriftyTextDoesNotExist(text: "add extra functionality")
+        
+        testTearDown()
     }
-
-    @MainActor
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
-        }
+    
+    func testWhenEditingANewTaskThenTheTaskIsUpdatedOnView() throws {
+        lauchApp()
+       
+        createATask()
+        
+        verifyTextExists(text: "Create a new to do list app")
+        verifyTextExists(text: "add extra functionality")
+        
+        swipeLeftOnTaskCard()
+        tapOnButton(text: "Edit Task")
+        
+        updateATask()
+        
+        verifyTextExists(text: "Create a app")
+        verifyTextExists(text: "update github")
+        
+        testTearDown()
+    }
+    
+    private func createATask() {
+        tapOnImage(named: "plus.circle.fill")
+        tapAndFillTextField(XCUIApplication().textFields["taskTitleTextField"], with: "Create a new to do list app")
+        tapAndFillTextField(XCUIApplication().textFields["taskDescriptionTextField"], with: "add extra functionality")
+        tapOnButton(text: "Create Task")
+    }
+    
+    private func updateATask() {
+        tapAndFillTextField(XCUIApplication().textFields["Task Title"], with: "Create a app")
+        tapAndFillTextField(XCUIApplication().textFields["Task Description"], with: "update github")
+        tapOnButton(text: "Update Task")
     }
 }
+

@@ -8,18 +8,19 @@ struct WeatherView: View {
     }
     
     var body: some View {
-        if let title = viewModel.dataModel?.errorName, let message = viewModel.dataModel?.errorName {
-            createErrorView(title: title, message: message)
+        if let error = viewModel.dataModel?.errorData {
+            createErrorView(title: error.errorReason,
+                            message: error.errorMessage)
             createWeatherView()
                 .background {
-                    Color.white
+                    Color.weatherCard
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .shadow(radius: 10)
                 }
         } else {
             createWeatherView()
                 .background {
-                    Color.white
+                    Color.weatherCard
                         .clipShape(RoundedRectangle(cornerRadius: 20))
                         .shadow(radius: 10)
                 }
@@ -42,58 +43,79 @@ struct WeatherView: View {
     
     @ViewBuilder
     private func createWeatherView() -> some View {
-
-            VStack(alignment: .center, spacing: 20) {
-                Image("weather background")
-                    .resizable()
-                    .frame(maxWidth: .infinity)
-                    .aspectRatio(contentMode: .fit)
-                    .roundedCorner(20, corners: [.topLeft, .topRight])
-                
-                VStack(spacing: 10) {
-                    viewModel.dataModel?.weatherCondition?.weatherConditionIcon
+        VStack(alignment: .center, spacing: 20) {
+            Image("weather background")
+                .resizable()
+                .frame(maxWidth: .infinity)
+                .aspectRatio(contentMode: .fit)
+                .roundedCorner(20, corners: [.topLeft, .topRight])
+                .overlay {
+                    viewModel.dataModel?.weatherData?.weatherCondition?.weatherConditionIcon
                         .resizable()
                         .frame(width: 50, height: 50)
-                        .foregroundStyle(viewModel.dataModel?.weatherCondition?.temperatureColor ?? .black)
-                    Text(viewModel.dataModel?.tempC ?? "")
-                        .font(.largeTitle)
-                        .foregroundStyle(viewModel.dataModel?.weatherCondition?.temperatureColor ?? .black)
-                        .fontWeight(.semibold)
-                    Text(viewModel.dataModel?.location ?? "")
-                        .bold()
+                        .foregroundStyle(viewModel.dataModel?.weatherData?.weatherCondition?.temperatureColor ?? .black)
+                        .padding()
+                        .background {
+                            Color.weatherCard
+                                .clipShape(Circle())
+                        }
                 }
-                
-                HStack(spacing: 15) {
-                    VStack(alignment: .center) {
-                        Text(viewModel.dataModel?.feelslikeC ?? "")
-                        Text("feels like")
-                            .font(.caption)
-                            .foregroundStyle(.gray)
-                    }
-                    .padding(.horizontal, 5)
-                    VStack(alignment: .center) {
-                        Text(viewModel.dataModel?.humidity ?? "")
-                        Text("humidity")
-                            .font(.caption)
-                            .foregroundStyle(.gray)
-                    }
-                    .padding(.horizontal, 5)
-                }
-                .padding(.vertical)
-                
-                HStack {
-                    VStack {
-                        Image(systemName: "sunrise.fill")
-                            .foregroundStyle(.yellow)
-                        Text(viewModel.dataModel?.sunriseTime ?? "")
-                    }
-                    Spacer()
-                    VStack {
-                        Image(systemName: "sunset.fill")
-                            .foregroundStyle(.orange)
-                        Text(viewModel.dataModel?.sunsetTime ?? "")
-                    }
-                }.padding()
+            if viewModel.shouldShowEmptyMessage {
+                Text("Unfortunately We were unable to retrieve the weather.\nWe will try again in 15 minutes")
+                    .multilineTextAlignment(.center)
+                    .bold()
+                    .foregroundStyle(.darkPurple)
             }
+            
+            if let data = viewModel.dataModel?.weatherData {
+                if let tempC = data.tempC, let location = data.location {
+                    VStack(spacing: 10) {
+                        Text(tempC)
+                            .font(.largeTitle)
+                            .foregroundStyle(data.weatherCondition?.temperatureColor ?? .black)
+                            .fontWeight(.semibold)
+                        Text(location)
+                            .bold()
+                    }
+                }
+                
+                if let humidity = data.humidity, let feelslikeC = data.feelslikeC {
+                    HStack(spacing: 15) {
+                        VStack(alignment: .center) {
+                            Text(data.feelslikeC ?? "")
+                            Text("feels like")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                        }
+                        .padding(.horizontal, 5)
+                        VStack(alignment: .center) {
+                            Text(data.humidity ?? "")
+                            Text("humidity")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                        }
+                        .padding(.horizontal, 5)
+                    }
+                    .padding(.vertical)
+                }
+                
+                if let sunrise = data.sunriseTime, let sunset = data.sunsetTime {
+                    HStack {
+                        VStack {
+                            Image(systemName: "sunrise.fill")
+                                .foregroundStyle(.yellow)
+                            Text(data.sunriseTime ?? "")
+                        }
+                        Spacer()
+                        VStack {
+                            Image(systemName: "sunset.fill")
+                                .foregroundStyle(.orange)
+                            Text(data.sunsetTime ?? "")
+                        }
+                    }
+                    .padding()
+                }
+            }
+        }
     }
 }

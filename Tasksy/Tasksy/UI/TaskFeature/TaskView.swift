@@ -137,6 +137,7 @@ struct TaskView: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         createButtons(task: task, buttons: section?.taskTrailingOptions)
                     }
+                    .accessibilityIdentifier("task row")
                     
                 }
                 .onMove { IndexSet, destination in

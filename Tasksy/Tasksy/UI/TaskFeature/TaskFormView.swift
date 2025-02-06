@@ -19,6 +19,7 @@ struct TaskFormView: View {
                 }
                 TextField("Task Title", text: $viewModel.title)
                     .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier("taskTitleTextField")
                 
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
@@ -37,6 +38,7 @@ struct TaskFormView: View {
                 
                 TextField("Task Description", text: $viewModel.description)
                     .frame(maxWidth: .infinity)
+                    .accessibilityIdentifier("taskDescriptionTextField")
                 Rectangle()
                     .frame(height: 1.0, alignment: .bottom)
                     .foregroundColor(Color.gray)

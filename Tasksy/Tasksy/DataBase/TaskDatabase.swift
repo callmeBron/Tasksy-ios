@@ -8,6 +8,7 @@ protocol TaskDatabase {
     func persistTask(task: TaskDataModel)
     func updateTask(updatedValues: TaskDataModel, selectedTask: TaskDataModel)
     func deleteTask(task: TaskDataModel)
+    func clearRealm()
 }
 
 class RealmTaskDatabase: TaskDatabase {
@@ -81,5 +82,16 @@ class RealmTaskDatabase: TaskDatabase {
                               taskCategory: TaskCategory(rawValue: $0.taskCategory) ?? .personal,
                               taskStatus: TaskStatus(rawValue: $0.taskStatus) ?? .inProgress)
             }
+    }
+    
+    func clearRealm() {
+        guard let taskRealm else { return }
+        do {
+            try taskRealm.write {
+                taskRealm.deleteAll()
+            }
+        } catch let error {
+            taskUpdateNotifier.send(.error(title: "Failed To Delete Task", message: "We were unable to delete your task."))
+        }
     }
 }
