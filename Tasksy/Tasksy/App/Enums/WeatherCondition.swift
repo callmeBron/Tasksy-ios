@@ -1,21 +1,34 @@
 import SwiftUICore
 
 enum WeatherCondition: String {
-    case cloudy = "a"
-    case sunny = "c"
-    case partlyCloudy = "d"
-    case rainy = "e"
+    case cloudy = "Cloudy"
+    case sunny = "Sunny"
+    case partlyCloudy = "Partly cloudy"
+    case rainy = "Heavy rain"
     
     var weatherConditionIcon: Image {
         switch self {
         case .cloudy:
-            Image(systemName: "")
+            return Image(systemName: "cloud.fill")
         case .sunny:
-            Image(systemName: "")
+            return Image(systemName: "sun.max.fill")
         case .partlyCloudy:
-            Image(systemName: "")
+            return Image(systemName: "cloud.sun.fill")
         case .rainy:
-            Image(systemName: "")
+            return Image(systemName: "cloud.rain.fill")
+        }
+    }
+    
+    var temperatureColor: Color {
+        switch self {
+        case .cloudy:
+            return Color.gray
+        case .sunny:
+            return Color.yellow
+        case .partlyCloudy:
+            return Color.gray
+        case .rainy:
+            return Color.pastelBlue
         }
     }
 }
