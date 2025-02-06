@@ -7,8 +7,7 @@ class TaskFormViewModel: ObservableObject {
     var viewTitle: String = ""
     var buttonTitle: String = ""
     var buttonAction: (() -> Void)?
-    
-    let taskOptions = TaskCategory.allCases
+    var taskOptions: [TaskCategory] = TaskCategory.allCases
     let selectedTask: TaskDataModel?
     
     private let taskRepository: TaskDatabase

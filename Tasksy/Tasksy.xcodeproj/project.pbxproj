@@ -30,6 +30,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		761C01132D555171007B3B2B /* TasksyUITests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TasksyUITests.xctestplan; sourceTree = "<group>"; };
+		761C01142D5553FC007B3B2B /* TasksyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = TasksyTests.xctestplan; sourceTree = "<group>"; };
 		76EAAAFD2D4DF1030015B35F /* Tasksy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tasksy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		76EAAB0D2D4DF1050015B35F /* TasksyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TasksyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		76EAAB172D4DF1060015B35F /* TasksyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TasksyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,6 +86,8 @@
 		76EAAAF42D4DF1030015B35F = {
 			isa = PBXGroup;
 			children = (
+				761C01142D5553FC007B3B2B /* TasksyTests.xctestplan */,
+				761C01132D555171007B3B2B /* TasksyUITests.xctestplan */,
 				76EAAAFF2D4DF1030015B35F /* Tasksy */,
 				76EAAB102D4DF1050015B35F /* TasksyTests */,
 				76EAAB1A2D4DF1060015B35F /* TasksyUITests */,

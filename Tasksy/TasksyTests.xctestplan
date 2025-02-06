@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "EC13530A-6022-4132-A24B-8AB89D39141E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : false,
+      "target" : {
+        "containerPath" : "container:Tasksy.xcodeproj",
+        "identifier" : "76EAAB0C2D4DF1050015B35F",
+        "name" : "TasksyTests"
+      }
+    }
+  ],
+  "version" : 1
+}
