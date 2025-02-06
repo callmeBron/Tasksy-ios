@@ -4,55 +4,65 @@ import Swinject
 struct TaskView: View {
     @StateObject var viewModel: TaskViewModel
     @State var showPopUp: Bool = false
+    
+    
     init(viewModel: TaskViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            createViewHeader()
-            if let notification = viewModel.dataModel?.notificationBanner {
-                NotificationBannerView(bannerTitle: notification.title,
-                                       bannerMessage: notification.message)
-            }
-            if let sections = viewModel.dataModel?.taskSections {
-                ForEach(sections) { section in
-                    VStack(spacing: 15) {
-                        createSectionHeader(title: section.title,
-                                            buttonAction: section.buttonAction)
-                        .padding()
-                        createSection(section: section)
-                    }
-                    .padding(.vertical)
+        VStack {
+            VStack(spacing: 20) {
+                createViewHeader()
+                if let notification = viewModel.dataModel?.notificationBanner {
+                    NotificationBannerView(bannerTitle: notification.title,
+                                           bannerMessage: notification.message)
                 }
-                
-                Spacer()
+                if let sections = viewModel.dataModel?.taskSections {
+                    ForEach(sections) { section in
+                        VStack(spacing: 15) {
+                            createSectionHeader(title: section.title,
+                                                buttonAction: section.buttonAction)
+                            .padding()
+                            createSection(section: section)
+                        }
+                        .padding(.vertical)
+                    }
+                    
+                    Spacer()
+                }
+            }
+            .refreshable {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    viewModel.fetch()
+                }
+            }
+            .popup(isPresented: $showPopUp) {
+                let weatherView = DependencyContainer.shared.injectObject(AnyView.self,
+                                                                          ObjectNames.TaskObjects.weatherView)
+                weatherView
+                    .padding()
+            }
+            .sheet(isPresented: $viewModel.showCreateTaskView) {
+                let addTaskView = DependencyContainer.shared.injectObjectWArg(AnyView.self,
+                                                                              ObjectNames.TaskObjects.taskFormView,
+                                                                              nil)
+                addTaskView
+            }
+            .sheet(isPresented: $viewModel.shouldShowEditView) {
+                let updateTaskView = DependencyContainer.shared.injectObjectWArg(AnyView.self,
+                                                                                 ObjectNames.TaskObjects.taskFormView,
+                                                                                 viewModel.selectedTask)
+                updateTaskView
+            }
+            .alert("Are you sure?", isPresented: $viewModel.showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) { }
+                Button("Delete", role: .destructive) { viewModel.deleteTask() }
+            } message: {
+                Text("Tapping Delete will remove the task permanently.")
             }
         }
-        .refreshable {
-            viewModel.fetch()
-        }
-        .popup(isPresented: $showPopUp, view: {
-            WeatherView()
-        })
-        .sheet(isPresented: $viewModel.showCreateTaskView) {
-            let addTaskView = TaskContainer.shared.injectObjectWArg(AnyView.self,
-                                                                    ObjectNames.TaskObjects.taskFormView,
-                                                                    nil)
-            addTaskView
-        }
-        .sheet(isPresented: $viewModel.shouldShowEditView) {
-            let updateTaskView = TaskContainer.shared.injectObjectWArg(AnyView.self,
-                                                                       ObjectNames.TaskObjects.taskFormView,
-                                                                       viewModel.selectedTask)
-            updateTaskView
-        }
-        .alert("Are you sure?", isPresented: $viewModel.showDeleteConfirmation) {
-            Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) { viewModel.deleteTask() }
-        } message: {
-            Text("Tapping Delete will remove the task permanently.")
-        }
+        .padding(.vertical)
     }
     
     @ViewBuilder
@@ -75,11 +85,10 @@ struct TaskView: View {
                     .foregroundStyle(.orange)
                     .background {
                         Capsule()
-                            .frame(width: 100)
-                            .foregroundStyle(.white)
-                            .shadow(radius: 2)
+                            .stroke(.gray.opacity(0.5), lineWidth: 0.5)
                     }
-            }.padding(.horizontal)
+            }
+            .padding(.horizontal)
         }
         .padding()
     }
@@ -115,7 +124,7 @@ struct TaskView: View {
                 .font(.title3)
         }
         
-        if let items = section?.tasks {
+        if var items = section?.tasks {
             List {
                 ForEach(items) { task in
                     TaskCardView(taskTitle: task.taskTitle,
@@ -130,9 +139,13 @@ struct TaskView: View {
                     }
                     
                 }
+                .onMove { IndexSet, destination in
+                    items.move(fromOffsets: IndexSet, toOffset: destination)
+                }
+                .listRowSeparator(.hidden)
+                .environment(\.defaultMinListRowHeight, 100)
             }
             .listStyle(.plain)
-            
         }
     }
     
