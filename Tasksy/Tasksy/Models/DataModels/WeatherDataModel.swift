@@ -1,6 +1,16 @@
 import Foundation
 import SwiftUI
 
+struct WeatherViewDataModel {
+    let weatherData: WeatherDataModel?
+    let errorData: ErrorResponse?
+    
+    init(weatherData: WeatherDataModel? = nil, errorData: ErrorResponse? = nil) {
+        self.weatherData = weatherData
+        self.errorData = errorData
+    }
+}
+
 struct WeatherDataModel {
     let errorName: String?
     let errorMessage: String?

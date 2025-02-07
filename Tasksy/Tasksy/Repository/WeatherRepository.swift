@@ -20,7 +20,7 @@ class ConcreteWeatherRepository: WeatherRepository {
         
         let calendar = Calendar.current
         
-        if let thirtyMinutesAgo = calendar.date(byAdding: .minute, value: -30, to: Date()),
+        if let fifteenMinsAgo = calendar.date(byAdding: .minute, value: -15, to: Date()),
            storedDate >= thirtyMinutesAgo {
             return (fetchWeatherFromDatabase(), nil)
         } else {

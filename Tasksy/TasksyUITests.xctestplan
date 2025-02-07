@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "4F8515BF-ECDF-4478-8FBF-43E15A270925",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Tasksy.xcodeproj",
+        "identifier" : "76EAAB162D4DF1060015B35F",
+        "name" : "TasksyUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
