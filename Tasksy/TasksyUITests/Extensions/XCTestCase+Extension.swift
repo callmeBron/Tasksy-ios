@@ -2,9 +2,6 @@ import XCTest
 
 extension XCTestCase {
     func lauchApp() {
-        if self.appIsInstalled(timeout: 5) {
-            uninstallApp(name: "Tasksy")
-        }
         let app = XCUIApplication()
         app.launch()
     }
@@ -13,11 +10,15 @@ extension XCTestCase {
         addTeardownBlock { [self] in
             let app = XCUIApplication(bundleIdentifier: "com.b.dos.santos.Tasksy")
             app.terminate()
-            if self.appIsInstalled(timeout: 5) {
-                uninstallApp(name: "Tasksy")
-            }
         }
     }
+    
+    func clearTextField(named: String) {
+        let textField = XCUIApplication().textFields[named]
+        textField.clearText()
+    }
+    
+    
     
     func tapOnImage(named: String){
         tapOnElement(element: XCUIApplication().images[named])
@@ -51,15 +52,15 @@ extension XCTestCase {
     }
     
     func swipeRightOnTaskCard() {
-        let row = XCUIApplication().tables.cells["task row"]
+        let row = XCUIApplication().cells.element(boundBy: 0)
         row.swipeRight()
     }
     
     func swipeLeftOnTaskCard() {
-        let row = XCUIApplication().tables.cells["task row"]
+        let row = XCUIApplication().cells.element(boundBy: 0)
         row.swipeLeft()
     }
-
+    
     private func appIsInstalled(timeout: TimeInterval) -> Bool {
         let appIdentifier = "Tasksy"
         let springboard = XCUIApplication(bundleIdentifier: "com.b.dos.santos.Tasksy")
@@ -71,7 +72,13 @@ extension XCTestCase {
         return result == .completed
     }
     
-    private func uninstallApp(name: String? = nil) {
+    func tapOnAlertDelete() {
+        let deleteAlertButton = XCUIApplication().alerts.buttons["Delete"]
+        XCTAssertTrue(deleteAlertButton.waitForExistence(timeout: 2), "Delete confirmation alert did not appear.")
+        deleteAlertButton.tap()
+    }
+    
+    func uninstallApp(name: String? = nil) {
         XCUIApplication().terminate()
         
         let timeout = TimeInterval(5)
