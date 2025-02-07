@@ -61,7 +61,8 @@ struct WeatherView: View {
                         }
                 }
             if viewModel.shouldShowEmptyMessage {
-                Text("Unfortunately We were unable to retrieve the weather.\nWe will try again in 15 minutes")
+                Text("Weather is updated every 15 minutes")
+                    .font(.caption)
                     .multilineTextAlignment(.center)
                     .bold()
                     .foregroundStyle(.darkPurple)

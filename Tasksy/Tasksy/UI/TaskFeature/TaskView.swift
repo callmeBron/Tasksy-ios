@@ -138,8 +138,6 @@ struct TaskView: View {
                     .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                         createButtons(task: task, buttons: section?.taskTrailingOptions)
                     }
-                    .accessibilityIdentifier("task row")
-                    
                 }
                 .onMove { IndexSet, destination in
                     items.move(fromOffsets: IndexSet, toOffset: destination)
@@ -148,6 +146,7 @@ struct TaskView: View {
                 .environment(\.defaultMinListRowHeight, 100)
             }
             .listStyle(.plain)
+            .accessibilityIdentifier("task row")
         }
     }
     
